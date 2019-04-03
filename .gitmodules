@@ -49,3 +49,6 @@
 [submodule "paal"]
 	path = paal
 	url = https://github.com/BNLIF/wire-cell-paal.git
+[submodule "pid"]
+	path = pid
+	url = https://github.com/BNLIF/wire-cell-pid.git
