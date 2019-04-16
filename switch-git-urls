@@ -19,5 +19,5 @@ esac
 echo "Convert to $to_url"
 sed -i -e 's|'$from_url'|'$to_url'|'g .gitmodules
 git submodule sync
-git remote set-url origin $to_url/wire-cell.git
+git remote set-url origin $to_url/wire-cell-calo.git
 
