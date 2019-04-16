@@ -481,63 +481,63 @@ int main(int argc, char* argv[])
     flashes.at(i)->set_flash_id(i);
   }
   
-  // form a global map with the current map information
-  std::map<int,std::map<const GeomWire*, SMGCSelection > > global_wc_map;
-  for (size_t i=0; i!=live_clusters.size();i++){
-    PR3DCluster *cluster = live_clusters.at(i);
-    SMGCSelection& mcells = cluster->get_mcells();
-    for (auto it = mcells.begin(); it!= mcells.end(); it++){
-      SlimMergeGeomCell *mcell = *it;
-      int time_slice = mcell->GetTimeSlice();
-      if (global_wc_map.find(time_slice)==global_wc_map.end()){
-	std::map<const GeomWire*, SMGCSelection> temp_wc_map;
-	global_wc_map[time_slice] = temp_wc_map;
-      }
-      std::map<const GeomWire*, SMGCSelection>& timeslice_wc_map = global_wc_map[time_slice];
+  // // form a global map with the current map information
+  // std::map<int,std::map<const GeomWire*, SMGCSelection > > global_wc_map;
+  // for (size_t i=0; i!=live_clusters.size();i++){
+  //   PR3DCluster *cluster = live_clusters.at(i);
+  //   SMGCSelection& mcells = cluster->get_mcells();
+  //   for (auto it = mcells.begin(); it!= mcells.end(); it++){
+  //     SlimMergeGeomCell *mcell = *it;
+  //     int time_slice = mcell->GetTimeSlice();
+  //     if (global_wc_map.find(time_slice)==global_wc_map.end()){
+  // 	std::map<const GeomWire*, SMGCSelection> temp_wc_map;
+  // 	global_wc_map[time_slice] = temp_wc_map;
+  //     }
+  //     std::map<const GeomWire*, SMGCSelection>& timeslice_wc_map = global_wc_map[time_slice];
       
-      GeomWireSelection& uwires = mcell->get_uwires();
-      GeomWireSelection& vwires = mcell->get_vwires();
-      GeomWireSelection& wwires = mcell->get_wwires();
-      std::vector<WirePlaneType_t> bad_planes = mcell->get_bad_planes();
-      if (find(bad_planes.begin(),bad_planes.end(),WirePlaneType_t(0))==bad_planes.end()){
-	for (int j=0;j!=uwires.size();j++){
-	  const GeomWire *wire = uwires.at(j);
-	  if (timeslice_wc_map.find(wire)==timeslice_wc_map.end()){
-	    SMGCSelection temp_mcells;
-	    temp_mcells.push_back(mcell);
-	    timeslice_wc_map[wire] = temp_mcells;
-	  }else{
-	    timeslice_wc_map[wire].push_back(mcell);
-	  }
-	}
-      }
-      if (find(bad_planes.begin(),bad_planes.end(),WirePlaneType_t(1))==bad_planes.end()){
-	for (int j=0;j!=vwires.size();j++){
-	  const GeomWire *wire = vwires.at(j);
-	  if (timeslice_wc_map.find(wire)==timeslice_wc_map.end()){
-	    SMGCSelection temp_mcells;
-	    temp_mcells.push_back(mcell);
-	    timeslice_wc_map[wire] = temp_mcells;
-	  }else{
-	    timeslice_wc_map[wire].push_back(mcell);
-	  }
-	}
-      }
-      if (find(bad_planes.begin(),bad_planes.end(),WirePlaneType_t(2))==bad_planes.end()){
-	for (int j=0;j!=wwires.size();j++){
-	  const GeomWire *wire = wwires.at(j);
-	  if (timeslice_wc_map.find(wire)==timeslice_wc_map.end()){
-	    SMGCSelection temp_mcells;
-	    temp_mcells.push_back(mcell);
-	    timeslice_wc_map[wire] = temp_mcells;
-	  }else{
-	    timeslice_wc_map[wire].push_back(mcell);
-	  }
-	}
-      }
-    }
-  }
-  //
+  //     GeomWireSelection& uwires = mcell->get_uwires();
+  //     GeomWireSelection& vwires = mcell->get_vwires();
+  //     GeomWireSelection& wwires = mcell->get_wwires();
+  //     std::vector<WirePlaneType_t> bad_planes = mcell->get_bad_planes();
+  //     if (find(bad_planes.begin(),bad_planes.end(),WirePlaneType_t(0))==bad_planes.end()){
+  // 	for (int j=0;j!=uwires.size();j++){
+  // 	  const GeomWire *wire = uwires.at(j);
+  // 	  if (timeslice_wc_map.find(wire)==timeslice_wc_map.end()){
+  // 	    SMGCSelection temp_mcells;
+  // 	    temp_mcells.push_back(mcell);
+  // 	    timeslice_wc_map[wire] = temp_mcells;
+  // 	  }else{
+  // 	    timeslice_wc_map[wire].push_back(mcell);
+  // 	  }
+  // 	}
+  //     }
+  //     if (find(bad_planes.begin(),bad_planes.end(),WirePlaneType_t(1))==bad_planes.end()){
+  // 	for (int j=0;j!=vwires.size();j++){
+  // 	  const GeomWire *wire = vwires.at(j);
+  // 	  if (timeslice_wc_map.find(wire)==timeslice_wc_map.end()){
+  // 	    SMGCSelection temp_mcells;
+  // 	    temp_mcells.push_back(mcell);
+  // 	    timeslice_wc_map[wire] = temp_mcells;
+  // 	  }else{
+  // 	    timeslice_wc_map[wire].push_back(mcell);
+  // 	  }
+  // 	}
+  //     }
+  //     if (find(bad_planes.begin(),bad_planes.end(),WirePlaneType_t(2))==bad_planes.end()){
+  // 	for (int j=0;j!=wwires.size();j++){
+  // 	  const GeomWire *wire = wwires.at(j);
+  // 	  if (timeslice_wc_map.find(wire)==timeslice_wc_map.end()){
+  // 	    SMGCSelection temp_mcells;
+  // 	    temp_mcells.push_back(mcell);
+  // 	    timeslice_wc_map[wire] = temp_mcells;
+  // 	  }else{
+  // 	    timeslice_wc_map[wire].push_back(mcell);
+  // 	  }
+  // 	}
+  //     }
+  //   }
+  // }
+  // //
    
   FlashTPCBundleSelection matched_bundles = WireCell2dToy::tpc_light_match(time_offset,nrebin,group_clusters,flashes);
   cout << em("TPC Light Matching") << std::endl;
@@ -569,14 +569,14 @@ int main(int argc, char* argv[])
       new_cluster->Create_point_cloud();
       old_new_cluster_map[live_clusters.at(i)] = new_cluster;
       
-      new_cluster->Create_graph(ct_point_cloud);
-      std::pair<WCPointCloud<double>::WCPoint,WCPointCloud<double>::WCPoint> new_wcps = new_cluster->get_highest_lowest_wcps();
-      new_cluster->dijkstra_shortest_paths(new_wcps.first);
-      new_cluster->cal_shortest_path(new_wcps.second);
+      //      new_cluster->Create_graph(ct_point_cloud);
+      //std::pair<WCPointCloud<double>::WCPoint,WCPointCloud<double>::WCPoint> new_wcps = new_cluster->get_highest_lowest_wcps();
+      //new_cluster->dijkstra_shortest_paths(new_wcps.first);
+      //new_cluster->cal_shortest_path(new_wcps.second);
     }
     
-    live_clusters.at(i)->fine_tracking(global_wc_map);
-    live_clusters.at(i)->collect_charge_trajectory(ct_point_cloud);
+    //    live_clusters.at(i)->fine_tracking(global_wc_map);
+    //    live_clusters.at(i)->collect_charge_trajectory(ct_point_cloud);
   }
 
 
