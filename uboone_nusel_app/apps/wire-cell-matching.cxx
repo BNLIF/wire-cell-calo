@@ -701,7 +701,180 @@ int main(int argc, char* argv[])
   
   cerr << em("test TGM") << std::endl;
   
-  
+  // clone TDC tree ... 
+  TDC->CloneTree()->Write();
+  {
+    TTree *TC_n = new TTree("TC","TC");
+    TC_n->SetDirectory(file1);
+    std::vector<int> *cluster_id = new std::vector<int>;
+    //
+    std::vector<int> *parent_cluster_id = new std::vector<int>;
+    //
+    std::vector<int> *time_slice = new std::vector<int>;
+    std::vector<double> *q = new std::vector<double>;    
+    std::vector<double> *uq = new std::vector<double>;
+    std::vector<double> *vq = new std::vector<double>;
+    std::vector<double> *wq = new std::vector<double>;    
+    std::vector<double> *udq = new std::vector<double>;
+    std::vector<double> *vdq = new std::vector<double>;   
+    std::vector<double> *wdq = new std::vector<double>; 
+    
+    TC_n->Branch("cluster_id",&cluster_id);
+    TC_n->Branch("parent_cluster_id",&parent_cluster_id);
+    TC_n->Branch("time_slice",&time_slice);
+    TC_n->Branch("q",&q);
+    TC_n->Branch("uq",&uq);
+    TC_n->Branch("vq",&vq);
+    TC_n->Branch("wq",&wq);
+    TC_n->Branch("udq",&udq);
+    TC_n->Branch("vdq",&vdq);
+    TC_n->Branch("wdq",&wdq);
+
+    std::vector<int> *nwire_u = new  std::vector<int>;
+    std::vector<int> *nwire_v = new  std::vector<int>;
+    std::vector<int> *nwire_w = new  std::vector<int>;
+    std::vector<int> *flag_u = new  std::vector<int>;
+    std::vector<int> *flag_v = new  std::vector<int>;
+    std::vector<int> *flag_w = new  std::vector<int>;
+    
+
+    std::vector<std::vector<int>> *wire_index_u = new std::vector<std::vector<int>>;
+    std::vector<std::vector<int>> *wire_index_v = new std::vector<std::vector<int>>;
+    std::vector<std::vector<int>> *wire_index_w = new std::vector<std::vector<int>>;
+    std::vector<std::vector<double>> *wire_charge_u = new std::vector<std::vector<double>>;
+    std::vector<std::vector<double>> *wire_charge_v = new std::vector<std::vector<double>>;
+    std::vector<std::vector<double>> *wire_charge_w = new std::vector<std::vector<double>>;
+    std::vector<std::vector<double>> *wire_charge_err_u = new std::vector<std::vector<double>>;
+    std::vector<std::vector<double>> *wire_charge_err_v = new std::vector<std::vector<double>>;
+    std::vector<std::vector<double>> *wire_charge_err_w = new std::vector<std::vector<double>>;
+
+    
+
+    TC_n->Branch("nwire_u",&nwire_u);
+    TC_n->Branch("nwire_v",&nwire_v);
+    TC_n->Branch("nwire_w",&nwire_w);
+    TC_n->Branch("flag_u",&flag_u);
+    TC_n->Branch("flag_v",&flag_v);
+    TC_n->Branch("flag_w",&flag_w);
+    TC_n->Branch("wire_index_u",&wire_index_u);
+    TC_n->Branch("wire_index_v",&wire_index_v);
+    TC_n->Branch("wire_index_w",&wire_index_w);
+    TC_n->Branch("wire_charge_u",&wire_charge_u);
+    TC_n->Branch("wire_charge_v",&wire_charge_v);
+    TC_n->Branch("wire_charge_w",&wire_charge_w);
+    TC_n->Branch("wire_charge_err_u",&wire_charge_err_u);
+    TC_n->Branch("wire_charge_err_v",&wire_charge_err_v);
+    TC_n->Branch("wire_charge_err_w",&wire_charge_err_w);
+
+    
+    for (auto it = matched_bundles.begin(); it!= matched_bundles.end(); it++){
+      FlashTPCBundle *bundle = *it;
+      PR3DCluster *main_cluster = bundle->get_main_cluster();
+      Opflash *flash = bundle->get_flash();
+      // now prepare saving it
+      int temp_parent_cluster_id = main_cluster->get_cluster_id();
+      PR3DClusterSelection temp_clusters;
+      temp_clusters.push_back(main_cluster);
+      for (auto it1 = bundle->get_other_clusters().begin(); it1!=bundle->get_other_clusters().end();it1++){
+	temp_clusters.push_back(*it1);
+      }
+
+      for (auto it1 = temp_clusters.begin(); it1!=temp_clusters.end(); it1++){
+	SMGCSelection& mcells = (*it1)->get_mcells();
+	
+	for (int i=0; i!=mcells.size();i++){
+	  cluster_id->push_back((*it1)->get_cluster_id());
+	  parent_cluster_id->push_back(temp_parent_cluster_id);
+
+	  SlimMergeGeomCell *mcell = (SlimMergeGeomCell*)mcells.at(i);
+	  int time_slice_temp = mcell->GetTimeSlice();
+	  time_slice->push_back(time_slice_temp);
+	  q->push_back(mcell->get_q());
+	  uq->push_back(mcell->get_uq());
+	  vq->push_back(mcell->get_vq());
+	  wq->push_back(mcell->get_wq());
+	  udq->push_back(mcell->get_udq());
+	  vdq->push_back(mcell->get_vdq());
+	  wdq->push_back(mcell->get_wdq());
+
+	  std::vector<WirePlaneType_t> bad_planes = mcell->get_bad_planes();
+	  flag_u->push_back(1);
+	  flag_v->push_back(1);
+	  flag_w->push_back(1);
+	  for (size_t i=0;i!=bad_planes.size();i++){
+	    if (bad_planes.at(i)==(WirePlaneType_t)(0)){
+	      flag_u->back() = 0;
+	    }else if (bad_planes.at(i)==(WirePlaneType_t)(1)){
+	      flag_v->back() = 0;
+	    }else if (bad_planes.at(i)==(WirePlaneType_t)(2)){
+	      flag_w->back() = 0;
+	    }else{
+	    }
+	  }
+	  GeomWireSelection& uwires = mcell->get_uwires();
+	  GeomWireSelection& vwires = mcell->get_vwires();
+	  GeomWireSelection& wwires = mcell->get_wwires();
+	  nwire_u->push_back(uwires.size());
+	  nwire_v->push_back(vwires.size());
+	  nwire_w->push_back(wwires.size());
+
+	  std::vector<int> wire_index_ui;
+	  std::vector<int> wire_index_vi;
+	  std::vector<int> wire_index_wi;
+	  std::vector<double> wire_charge_ui;
+	  std::vector<double> wire_charge_vi;
+	  std::vector<double> wire_charge_wi;
+	  std::vector<double> wire_charge_err_ui;
+	  std::vector<double> wire_charge_err_vi;
+	  std::vector<double> wire_charge_err_wi;
+	  
+	  for (auto it2 = uwires.begin(); it2!=uwires.end(); it2++){
+	    const GeomWire *wire = (*it2);
+	    wire_index_ui.push_back(wire->index());
+	    wire_charge_ui.push_back(mcell->Get_Wire_Charge(wire));
+	    wire_charge_err_ui.push_back(mcell->Get_Wire_Charge_Err(wire));
+	  }
+	  for (auto it2 = vwires.begin(); it2!=vwires.end(); it2++){
+	    const GeomWire *wire = (*it2);
+	    wire_index_vi.push_back(wire->index());
+	    wire_charge_vi.push_back(mcell->Get_Wire_Charge(wire));
+	    wire_charge_err_vi.push_back(mcell->Get_Wire_Charge_Err(wire));
+	  }
+	  for (auto it2 = wwires.begin(); it2!=wwires.end(); it2++){
+	    const GeomWire *wire = (*it2);
+	    wire_index_wi.push_back(wire->index());
+	    wire_charge_wi.push_back(mcell->Get_Wire_Charge(wire));
+	    wire_charge_err_wi.push_back(mcell->Get_Wire_Charge_Err(wire));
+	  }
+	  wire_index_u->push_back(wire_index_ui);
+	  wire_index_v->push_back(wire_index_vi);
+	  wire_index_w->push_back(wire_index_wi);
+	  wire_charge_u->push_back(wire_charge_ui);
+	  wire_charge_v->push_back(wire_charge_vi);
+	  wire_charge_w->push_back(wire_charge_wi);
+	  wire_charge_err_u->push_back(wire_charge_err_ui);
+	  wire_charge_err_v->push_back(wire_charge_err_vi);
+	  wire_charge_err_w->push_back(wire_charge_err_wi);
+	}
+      }
+      
+    }
+    
+    TC_n->Fill();
+    cluster_id->clear();
+    parent_cluster_id->clear();
+    nwire_u->clear();
+    nwire_v->clear();
+    nwire_w->clear();
+    flag_u->clear();
+    flag_v->clear();
+    flag_w->clear();
+    wire_index_u->clear();
+    wire_index_v->clear();
+    wire_index_w->clear();
+  }
+  //
+
   
   TTree *T_bad_ch = (TTree*)file->Get("T_bad_ch");
   if (T_bad_ch!=0){

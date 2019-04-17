@@ -3779,10 +3779,10 @@ if (no_dead_channel==1){
     //  cluster_id->push_back((*it)->get_id());
     
       for (int i=0; i!=(*it)->get_allcell().size();i++){
-    cluster_id->push_back((*it)->get_id());
+	cluster_id->push_back((*it)->get_id());
 	SlimMergeGeomCell *mcell = (SlimMergeGeomCell*)((*it)->get_allcell().at(i));
 	int time_slice_temp = mcell->GetTimeSlice();
-    time_slice->push_back(time_slice_temp);
+	time_slice->push_back(time_slice_temp);
 	q->push_back(chargesolver[time_slice_temp]->get_mcell_charge(mcell));
 	
 	GeomCellMap cell_wires_map = lowmemtiling[time_slice_temp]->get_cell_wires_map();
@@ -3812,8 +3812,8 @@ if (no_dead_channel==1){
 
 	std::vector<WirePlaneType_t> bad_planes = mcell->get_bad_planes();
 	flag_u_i = 1;
-      flag_v_i = 1;
-      flag_w_i = 1;
+	flag_v_i = 1;
+	flag_w_i = 1;
 	for (size_t j= 0 ; j!=bad_planes.size(); j++){
 	  if (bad_planes.at(j)==WirePlaneType_t(0)){
 	    flag_u_i = 0;
@@ -3823,7 +3823,7 @@ if (no_dead_channel==1){
 	    flag_w_i = 0;
 	  }
 	} 
-      flag_u->push_back(flag_u_i);
+	flag_u->push_back(flag_u_i);
  	flag_v->push_back(flag_v_i);
  	flag_w->push_back(flag_w_i);
 
@@ -3846,24 +3846,24 @@ if (no_dead_channel==1){
 	  wire_charge_err_wi.push_back(wire_charge_error[wire]);
 	}
 		
-    wire_index_u->push_back(wire_index_ui);	
-    wire_index_v->push_back(wire_index_vi);	
-    wire_index_w->push_back(wire_index_wi);
-    wire_charge_u->push_back(wire_charge_ui);
-    wire_charge_v->push_back(wire_charge_vi);
-    wire_charge_w->push_back(wire_charge_wi);
-    wire_charge_err_u->push_back(wire_charge_err_ui);
-    wire_charge_err_v->push_back(wire_charge_err_vi);
-    wire_charge_err_w->push_back(wire_charge_err_wi);
-    wire_index_ui.clear();
-    wire_index_vi.clear();
-    wire_index_wi.clear();
-    wire_charge_ui.clear();
-    wire_charge_vi.clear();
-    wire_charge_wi.clear();
-    wire_charge_err_ui.clear();
-    wire_charge_err_vi.clear();
-    wire_charge_err_wi.clear();
+	wire_index_u->push_back(wire_index_ui);	
+	wire_index_v->push_back(wire_index_vi);	
+	wire_index_w->push_back(wire_index_wi);
+	wire_charge_u->push_back(wire_charge_ui);
+	wire_charge_v->push_back(wire_charge_vi);
+	wire_charge_w->push_back(wire_charge_wi);
+	wire_charge_err_u->push_back(wire_charge_err_ui);
+	wire_charge_err_v->push_back(wire_charge_err_vi);
+	wire_charge_err_w->push_back(wire_charge_err_wi);
+	wire_index_ui.clear();
+	wire_index_vi.clear();
+	wire_index_wi.clear();
+	wire_charge_ui.clear();
+	wire_charge_vi.clear();
+	wire_charge_wi.clear();
+	wire_charge_err_ui.clear();
+	wire_charge_err_vi.clear();
+	wire_charge_err_wi.clear();
       } // each cell
     } // end saving live stuff ...
     
