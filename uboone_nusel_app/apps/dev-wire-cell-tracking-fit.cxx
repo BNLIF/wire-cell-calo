@@ -892,6 +892,8 @@ int main(int argc, char* argv[])
        t_bad->Fill();
      }
    }
+
+   cerr << em("Fill t_bad tree") << std::endl;
    
    TTree *T_cluster ;
    Double_t x,y,z,q,nq;
@@ -1022,6 +1024,8 @@ int main(int argc, char* argv[])
      }
      //     ncluster ++;
    }
+   cerr << em("Fill T_cluster tree") << std::endl;
+
    
    for (size_t j = 0; j!= live_clusters.size(); j++){
      
@@ -1069,6 +1073,9 @@ int main(int argc, char* argv[])
      std::vector<double>& tpv = live_clusters.at(j)->get_pv();
      std::vector<double>& tpw = live_clusters.at(j)->get_pw();
      std::vector<double>& tpt = live_clusters.at(j)->get_pt();
+
+     if (pts.size()!=dQ.size()) continue;
+     //     std::cout << pts.size() << " " << dQ.size() << " " << dx.size() << " " << tpu.size() << " "  << std::endl;
      
      std::map<std::pair<int,int>, std::tuple<double,double,double> > & proj_data_u_map = live_clusters.at(j)->get_proj_data_u_map();
      std::map<std::pair<int,int>, std::tuple<double,double,double> > & proj_data_v_map = live_clusters.at(j)->get_proj_data_v_map();
@@ -1148,6 +1155,8 @@ int main(int argc, char* argv[])
      // }
    }
 
+   cerr << em("Fill t_rec and t_rec_charge trees") << std::endl;
+   
    // ncluster = 0;
    // for (auto it = dead_live_cluster_mapping.begin(); it!= dead_live_cluster_mapping.end(); it++){
    //   std::vector<PR3DCluster*> clusters = (*it).second;
@@ -1217,6 +1226,8 @@ int main(int argc, char* argv[])
 
   t1->Fill();
 
+  cerr << em("Fill T_data tree") << std::endl;
+  
   // TH2F *h1 = new TH2F("hraw","hraw",1500,0,1500,32,0,32);
   // TH2F *h2 = new TH2F("hdecon","hdecon",250,0,250,32,0,32);
   // TH2F *h3 = new TH2F("hl1","hl1",250,0,250,32,0,32);
@@ -1354,7 +1365,10 @@ int main(int argc, char* argv[])
   }
   T_proj->Fill();
   T_proj_data->Fill();
-   
+
+  cerr << em("Fill T_proj and T_proj_data trees") << std::endl;
+
+  
   file1->Write();
   file1->Close();
 }
